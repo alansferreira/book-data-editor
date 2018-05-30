@@ -48,7 +48,7 @@ angular.module('app1', ['ngMaterial', 'ngMessages'])
         'PICX': 'yellow',
         'PIC9': 'orange',
         'PICS9': 'orange',
-        'PIC+9': 'orange'
+        'PIC_PLUS_9': 'orange'
     };
     function getRandomColor(type) {
         var hue = (randomColorHueTypeMap[type] || 'orange');
@@ -68,13 +68,19 @@ angular.module('app1', ['ngMaterial', 'ngMessages'])
 
     $scope.onPieceClick = function(piece, ev){
         var $el = $('#field' + piece.dataField.guid);
+        var $elClicked = $(ev.currentTarget);
         var $itemFocus = $('#itemFocus');
+
         $itemFocus.html(piece.dataField.dataContentHtml);
         $itemFocus.show();
-        $itemFocus.offset($(ev.currentTarget).offset());
+        $itemFocus.attr("style", $elClicked.attr("style")).addClass($elClicked.attr("class"));
+        $itemFocus.offset($elClicked.offset());
+
         $itemFocus.animate({
-            ...$el.offset()
-        }, { 
+            ...$el.offset(),
+        }, 
+        {
+            duration: 1000,
             complete: function(){
                 $el.focus();
                 $itemFocus.hide();

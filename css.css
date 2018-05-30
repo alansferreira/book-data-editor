@@ -1,5 +1,9 @@
-.background {
-  
+.fields-background {
+  background-color: #fffcf0;
+}
+
+.data-background {
+  background-color: #fffcf0;
 }
 
 .full-content-html {
@@ -11,9 +15,12 @@
   }
   
   .item-focus {
-    position: absolute;
-    background-color: red;
-    z-index: 99999999;  
+    position: absolute !important;
+    background-color: yellow;
+    z-index: 99999999 !important; 
+    word-wrap: normal !important;
+    font-family: 'Courier new' !important;
+    width: fit-content !important;
   }
 
   [tooltip]{

@@ -12,10 +12,10 @@
 </head>
 <body>
     
-    <div ng-app='app1' flex>
+    <div ng-app='app1' flex class="background">
         <div ng-controller='ctrl1' flex>
 
-            <md-toolbar class="md-menu-toolbar" style="position: fixed; top:0px;">
+            <md-toolbar class="md-menu-toolbar" >
                 <div layout="row">
                     <md-toolbar-filler layout layout-align="center center">
                         <md-icon aria-label="Menu" class="material-icons">menu</md-icon>
@@ -48,8 +48,9 @@
             </md-toolbar>
 
 
-
-            <md-container layout="row" flex>
+            <span id="itemFocus" class="item-focus"></span>
+            <div style="height: 20px;"></div>
+            <md-content layout="row" flex>
                 <div flex="50">
                     <div ng-repeat='item in pieces' >
                         <div ng-if="item.dataFields">{{rootName}}:\:{{item.dataField.name}}</div>
@@ -71,19 +72,19 @@
                     </div>
                 </div>
                 <div flex="50" layout="column" ng-trim="false"> 
-                    <div class='full-content-html'><span 
+                    <div id="piecesContainer" class='full-content-html'><span 
                         ng-repeat="piece in pieces"
                         class='selectable full-content-html' 
                         ng-style="{'background-color': piece.color}"
                         style="word-wrap: break-word;" 
                         tooltip="{{piece.dataField.name}} {{piece.dataField.type}}({{piece.dataField.size}})::{{piece.dataField.index +1}}" 
                         id="piece{{piece.guid}}"
-                        ng-click="onPieceClick(piece)"
+                        ng-click="onPieceClick(piece, $event)"
                         ng-bind-html="deliberatelyTrustDangerousSnippet(piece.dataField.dataContentHtml)">
                     
                     </span></div>
                 </div>
-            </md-container>
+            </md-content>
         </div>
         <div style="visibility: hidden">
             <div class="md-dialog-container" ng-controller="dialogController" id="dlgOpenCopyBookDefinition">

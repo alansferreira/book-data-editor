@@ -66,9 +66,20 @@ angular.module('app1', ['ngMaterial', 'ngMessages'])
         dumpData(item);
     };
 
-    $scope.onPieceClick = function(piece){
-        
-        $('#field' + piece.dataField.guid).focus();
+    $scope.onPieceClick = function(piece, ev){
+        var $el = $('#field' + piece.dataField.guid);
+        var $itemFocus = $('#itemFocus');
+        $itemFocus.html(piece.dataField.dataContentHtml);
+        $itemFocus.show();
+        $itemFocus.offset($(ev.currentTarget).offset());
+        $itemFocus.animate({
+            ...$el.offset()
+        }, { 
+            complete: function(){
+                $el.focus();
+                $itemFocus.hide();
+           }
+        });
     };  
     $scope.onPieceKeydown = function(piece){
         console.log(piece);
@@ -119,3 +130,9 @@ angular.module('app1', ['ngMaterial', 'ngMessages'])
       $mdDialog.hide(answer);
     };
 }); 
+
+$(function(){
+    $(window).resize(function(){
+        $('#piecesContainer').width('50%');
+    });
+});

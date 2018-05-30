@@ -1,12 +1,21 @@
+.background {
+  
+}
+
 .full-content-html {
     position: fixed;
-    top: 60px;
+    top: 70px;
     width: 700px;
     word-wrap: break-word;
     font-family: 'Courier new';
   }
   
-  
+  .item-focus {
+    position: absolute;
+    background-color: red;
+    z-index: 99999999;  
+  }
+
   [tooltip]{
     position:relative;
   }

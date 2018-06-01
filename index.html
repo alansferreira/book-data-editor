@@ -75,7 +75,7 @@
                 <div flex="50" layout="column" ng-trim="false" class="data-background"> 
                     <div id="piecesContainer" class='full-content-html'><span 
                         ng-repeat="piece in pieces"
-                        class='selectable full-content-html' 
+                        class='selectable full-content-html piece-{{piece.dataField.type}}' 
                         ng-style="{'background-color': piece.color}"
                         style="word-wrap: break-word;" 
                         tooltip="{{piece.dataField.name}} {{piece.dataField.type}}({{piece.dataField.size}})::{{piece.dataField.index +1}}" 

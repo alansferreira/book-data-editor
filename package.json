@@ -14,7 +14,7 @@
     "angular-aria": "1.7.0",
     "angular-material": "1.1.9",
     "angular-messages": "1.7.0",
-    "cds-parsers": "0.1.60-0",
+    "cds-parsers": "0.1.61-0",
     "jquery": "3.3.1",
     "material-icons": "0.2.3"
   }

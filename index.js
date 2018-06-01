@@ -6,62 +6,87 @@ function guid(){function n(){return Math.floor(65536*(1+Math.random())).toString
 var cdsCopyBook = initializeCOBOLCopybookParser();
 
 angular.module('app1', ['ngMaterial', 'ngMessages'])
-.controller('ctrl1', function($scope, $sce, $mdDialog){
+.factory('$bookService', function(){
+    var $bookService = {
+        book: {
+            /**
+             * original nested fields definition
+             */
+            nestedSpec: [],
+            /**
+             * expanded data fields, new $scope.data
+             */
+            nestedExpandedData: [], 
+            /**
+             * new pieces
+             */
+            rawDataFields:[], 
+            /**
+             * mapped raw data fields by guid like {'23iuuu3-dfs-3-123-': {color: '...', dataField: {...}}}
+             */
+            guidExtraInfo: {}, 
+        },
+        randomColorHueTypeMap: {
+            'PICX': 'yellow',
+            'PIC9': 'orange',
+            'PICS9': 'orange',
+            'PIC_PLUS_9': 'orange'
+        },
+        getRandomColor: (type) => {
+            var hue = ($bookService.randomColorHueTypeMap[type] || 'orange');
+            return randomColor({luminosity: 'light', hue: hue});
+        },    
+        dumpDataArray: (dataFields) => { 
+            dataFields.map((subField) => {
+                $bookService.dumpData(subField);
+            });
+        },
+        dumpData: (dataField) => {
+            if(!dataField.guid){
+                dataField.guid = guid().replace(/-/g, '_');
+                $bookService.book.guidExtraInfo[dataField.guid] = {dataField, color: $bookService.getRandomColor(dataField.type)};
+                $bookService.book.rawDataFields.push($bookService.book.guidExtraInfo[dataField.guid]);   
+            }
+    
+            switch(dataField.type){
+            case 'GROUP_ITEM':
+                $bookService.dumpDataArray(dataField.dataFields);
+                break;
+            case 'PIC9':
+                dataField.dataContentHtml = 
+                dataField.dataContent.padStart(dataField.size, '0')
+                .replace(/ /g, "&nbsp;"); 
+                break;
+            default:
+                dataField.dataContentHtml = 
+                dataField.dataContent.padEnd(dataField.size, ' ')
+                .replace(/ /g, "&nbsp;"); 
+                break;
+            }
+        },
+        buildFullContent: () => {
+            $bookService.book.rawDataFields = [];
+            $bookService.book.guidExtraInfo = {};
+            $bookService.dumpDataArray($bookService.book.nestedExpandedData);    
+        },
+        parseBook: (content, importCopyCallback)=> {
+            $bookService.book.nestedSpec = cdsCopyBook.loadBook(content, importCopyCallback);
+            $bookService.book.nestedExpandedData = cdsCopyBook.expandDataBook($bookService.book.nestedSpec);
+            $bookService.buildFullContent();
+            
+            return $bookService.nestedSpec;
+        }
 
-    $scope.data = [{"name":"FILLER","size":"050","type":"PICX","dataContent":"","index":0},{"name":"FILLER","size":"050","type":"PICX","dataContent":"","index":0},{"type":"GROUP_ITEM","logicalLevel":"01","name":"WRK-AREA-ERRO","dataFields":[{"type":"GROUP_ITEM","logicalLevel":"05","name":"WRK-BLOCO-INFO-ERRO","occurs_min":"SPACES","dataFields":[{"name":"WRK-CHAR-INFO-ERRO","size":"001","type":"PICX","dataContent":"","index":0},{"name":"WRK-CHAR-INFO-ERRO","size":"001","type":"PICX","dataContent":"","index":1},{"name":"WRK-CHAR-INFO-ERRO","size":"001","type":"PICX","dataContent":"","index":2},{"name":"WRK-CHAR-INFO-ERRO","size":"001","type":"PICX","dataContent":"","index":3},{"name":"WRK-CHAR-INFO-ERRO","size":"001","type":"PICX","dataContent":"","index":4},{"name":"WRK-CHAR-INFO-ERRO","size":"001","type":"PICX","dataContent":"","index":5},{"name":"WRK-CHAR-INFO-ERRO","size":"001","type":"PICX","dataContent":"","index":6},{"name":"WRK-CHAR-INFO-ERRO","size":"001","type":"PICX","dataContent":"","index":7},{"name":"WRK-CHAR-INFO-ERRO","size":"001","type":"PICX","dataContent":"","index":8},{"name":"WRK-CHAR-INFO-ERRO","size":"001","type":"PICX","dataContent":"","index":9},{"name":"WRK-CHAR-INFO-ERRO","size":"001","type":"PICX","dataContent":"","index":10},{"name":"WRK-CHAR-INFO-ERRO","size":"001","type":"PICX","dataContent":"","index":11},{"name":"WRK-CHAR-INFO-ERRO","size":"001","type":"PICX","dataContent":"","index":12},{"name":"WRK-CHAR-INFO-ERRO","size":"001","type":"PICX","dataContent":"","index":13},{"name":"WRK-CHAR-INFO-ERRO","size":"001","type":"PICX","dataContent":"","index":14},{"name":"WRK-CHAR-INFO-ERRO","size":"001","type":"PICX","dataContent":"","index":15},{"name":"WRK-CHAR-INFO-ERRO","size":"001","type":"PICX","dataContent":"","index":16},{"name":"WRK-CHAR-INFO-ERRO","size":"001","type":"PICX","dataContent":"","index":17},{"name":"WRK-CHAR-INFO-ERRO","size":"001","type":"PICX","dataContent":"","index":18},{"name":"WRK-CHAR-INFO-ERRO","size":"001","type":"PICX","dataContent":"","index":19},{"name":"WRK-CHAR-INFO-ERRO","size":"001","type":"PICX","dataContent":"","index":20},{"name":"WRK-CHAR-INFO-ERRO","size":"001","type":"PICX","dataContent":"","index":21},{"name":"WRK-CHAR-INFO-ERRO","size":"001","type":"PICX","dataContent":"","index":22},{"name":"WRK-CHAR-INFO-ERRO","size":"001","type":"PICX","dataContent":"","index":23},{"name":"WRK-CHAR-INFO-ERRO","size":"001","type":"PICX","dataContent":"","index":24},{"name":"WRK-CHAR-INFO-ERRO","size":"001","type":"PICX","dataContent":"","index":25},{"name":"WRK-CHAR-INFO-ERRO","size":"001","type":"PICX","dataContent":"","index":26},{"name":"WRK-CHAR-INFO-ERRO","size":"001","type":"PICX","dataContent":"","index":27},{"name":"WRK-CHAR-INFO-ERRO","size":"001","type":"PICX","dataContent":"","index":28},{"name":"WRK-CHAR-INFO-ERRO","size":"001","type":"PICX","dataContent":"","index":29},{"name":"WRK-CHAR-INFO-ERRO","size":"001","type":"PICX","dataContent":"","index":30},{"name":"FILLER","size":"050","type":"PICX","dataContent":"","index":0}],"index":0}],"index":0},{"type":"GROUP_ITEM","logicalLevel":"01","name":"WRK-FRWKGARQ","dataFields":[],"index":0},{"name":"FILLER","size":"050","type":"PICX","dataContent":"","index":0},{"type":"GROUP_ITEM","logicalLevel":"01","name":"WRK-AREA-ERRO-DB2","dataFields":[],"index":0},{"name":"FILLER","size":"050","type":"PICX","dataContent":"","index":0},{"name":"FILLER","size":"050","type":"PICX","dataContent":"","index":0},{"type":"GROUP_ITEM","logicalLevel":"01","name":"WRK-FRWKGMOD","dataFields":[],"index":0},{"name":"FILLER","size":"050","type":"PICX","dataContent":"","index":0},{"name":"FILLER","size":"050","type":"PICX","dataContent":"","index":0},{"type":"GROUP_ITEM","logicalLevel":"01","name":"WRK-AREA-CBPAW031","dataFields":[],"index":0},{"name":"FILLER","size":"050","type":"PICX","dataContent":"","index":0},{"type":"GROUP_ITEM","logicalLevel":"01","name":"WRK-AREA-CBTT2E8F","dataFields":[],"index":0},{"name":"FILLER","size":"050","type":"PICX","dataContent":"","index":0},{"type":"GROUP_ITEM","logicalLevel":"01","name":"WRK-AREA-CMCD2ABC","dataFields":[],"index":0},{"name":"FILLER","size":"050","type":"PICX","dataContent":"","index":0},{"name":"FILLER","size":"050","type":"PICX","dataContent":"","index":0},{"type":"GROUP_ITEM","logicalLevel":"01","name":"WRK-AREA-INEC2000","dataFields":[],"index":0},{"name":"FILLER","size":"50","type":"PICX","dataContent":"","index":0},{"name":"WRK-P0160-JOB","size":"008","type":"PICX","dataContent":"","index":0},{"name":"WRK-P0160-VALORFAC","size":"05","type":"PIC9","compression_logicalLevel":"3","has_compression":"COMP-3 ","dataContent":"","index":0},{"name":"FILLER","size":"050","type":"PICX","dataContent":"","index":0},{"type":"GROUP_ITEM","logicalLevel":"01","name":"WRK-ACUMULADORES","dataFields":[{"name":"ACU-LIDOS-ARQBAIXA","size":"009","type":"PIC9","compression_logicalLevel":"3","has_compression":"COMP-3  ","dataContent":"","index":0},{"name":"ACU-BAIXA-NAO-ACHOU","size":"009","type":"PIC9","compression_logicalLevel":"3","has_compression":"COMP-3  ","dataContent":"","index":0},{"name":"ACU-DESPREZADOS-MOEDA","size":"009","type":"PIC9","compression_logicalLevel":"3","has_compression":"COMP-3  ","dataContent":"","index":0},{"name":"ACU-DESPREZADOS-VALOR","size":"009","type":"PIC9","compression_logicalLevel":"3","has_compression":"COMP-3  ","dataContent":"","index":0},{"name":"ACU-DESPREZADOS-BAIXA","size":"009","type":"PIC9","compression_logicalLevel":"3","has_compression":"COMP-3  ","dataContent":"","index":0},{"name":"ACU-DESPREZADOS-OCOR","size":"009","type":"PIC9","compression_logicalLevel":"3","has_compression":"COMP-3  ","dataContent":"","index":0},{"name":"ACU-GRAVADOS-BAIXA-14","size":"009","type":"PIC9","compression_logicalLevel":"3","has_compression":"COMP-3  ","dataContent":"","index":0},{"name":"ACU-GRAVADOS-BAIXA-15","size":"009","type":"PIC9","compression_logicalLevel":"3","has_compression":"COMP-3  ","dataContent":"","index":0},{"name":"ACU-GRAVADOS-TITBAIXA","size":"009","type":"PIC9","compression_logicalLevel":"3","has_compression":"COMP-3  ","dataContent":"","index":0},{"name":"ACU-GRAVADOS-DUPLICADOS","size":"009","type":"PIC9","compression_logicalLevel":"3","has_compression":"COMP-3  ","dataContent":"","index":0},{"name":"FILLER","size":"050","type":"PICX","dataContent":"","index":0},{"name":"WRK-DUMP-BAT","size":"001","type":"PICX","dataContent":"","index":0},{"name":"WRK-ABEND-BAT","size":"004","type":"PICS9","has_compression":"COMP ","dataContent":"","index":0},{"name":"WRK-FRWK2999","size":"008","type":"PICX","dataContent":"","index":0},{"name":"WRK-PROGRAMA","size":"008","type":"PICX","dataContent":"","index":0},{"name":"WRK-MODULO","size":"008","type":"PICX","dataContent":"","index":0},{"name":"WRK-CKRS0105","size":"008","type":"PICX","dataContent":"","index":0},{"name":"WRK-BRAD0160","size":"008","type":"PICX","dataContent":"","index":0},{"name":"WRK-BRAD0450","size":"008","type":"PICX","dataContent":"","index":0},{"name":"WRK-CBPA2EST","size":"008","type":"PICX","dataContent":"","index":0},{"name":"WRK-ARQBAIXA","size":"008","type":"PICX","dataContent":"","index":0},{"name":"WRK-BAIXA34","size":"008","type":"PICX","dataContent":"","index":0},{"name":"WRK-BAIXA35","size":"008","type":"PICX","dataContent":"","index":0},{"name":"WRK-TITBAIXA","size":"008","type":"PICX","dataContent":"","index":0},{"name":"WRK-TITDUPL","size":"008","type":"PICX","dataContent":"","index":0},{"name":"WRK-FLAG-TABELAS","size":"001","type":"PIC9","compression_logicalLevel":"3","has_compression":"COMP-3  ","dataContent":"","index":0},{"name":"WRK-LOCAL","size":"004","type":"PICX","dataContent":"","index":0},{"name":"WRK-FLAG-INCONS","size":"001","type":"PICX","dataContent":"","index":0}],"index":0},{"name":"WRK-CNEGOC-COBR","size":"018","type":"PIC9","dataContent":"","index":0},{"name":"WRK-ECONM-MOEDA-X10","size":"010","type":"PICX","dataContent":"","index":0},{"name":"WRK-SQLCODE-S9-9","size":"009","type":"PICS9","dataContent":"","index":0},{"type":"GROUP_ITEM","logicalLevel":"01","name":"WRK-DATA-X-10","dataFields":[{"name":"WRK-DIA-D","size":"002","type":"PIC9","dataContent":"","index":0},{"name":"FILLER","size":"001","type":"PICX","dataContent":"","index":0},{"name":"WRK-MES-D","size":"002","type":"PIC9","dataContent":"","index":0},{"name":"FILLER","size":"001","type":"PICX","dataContent":"","index":0},{"name":"WRK-ANO-D","size":"004","type":"PIC9","dataContent":"","index":0}],"index":0},{"name":"WRK-DATA-9-8","size":"008","type":"PIC9","dataContent":"","index":0},{"name":"WRK-912-ZON","size":"012","type":"PIC9","dataContent":"","index":0},{"name":"WRK-912-98","size":"012","type":"PIC9","dataContent":"","index":0},{"name":"WRK-S10-910","size":"10","type":"PIC_PLUS_9","dataContent":"","index":0},{"name":"WRK-S3-93","size":"03","type":"PIC_PLUS_9","dataContent":"","index":0},{"type":"GROUP_ITEM","logicalLevel":"01","name":"WRK-COMPILACAO","dataFields":[{"type":"GROUP_ITEM","logicalLevel":"05","name":"WRK-DTCOMPILA","dataFields":[{"name":"WRK-MMCOMPILA","size":"002","type":"PICX","dataContent":"","index":0},{"name":"FILLER","size":"001","type":"PICX","dataContent":"","index":0},{"name":"WRK-DDCOMPILA","size":"002","type":"PICX","dataContent":"","index":0},{"name":"FILLER","size":"001","type":"PICX","dataContent":"","index":0},{"name":"WRK-AACOMPILA","size":"002","type":"PICX","dataContent":"","index":0}],"index":0},{"name":"WRK-HRCOMPILA","size":"008","type":"PICX","dataContent":"","index":0},{"name":"FILLER","size":"060","type":"PICX","dataContent":"","index":0}],"index":0},{"type":"GROUP_ITEM","logicalLevel":"01","name":"WRK-TRATAMENTO-NULOS","dataFields":[{"name":"WRK-CTPO-CANAL-N","size":"004","type":"PICS9","has_compression":"COMP ","dataContent":"","index":0},{"name":"WRK-CPSSOA-LCTO-CTA-N","size":"004","type":"PICS9","has_compression":"COMP ","dataContent":"","index":0},{"name":"WRK-CTPO-LCTO-CTA-N","size":"004","type":"PICS9","has_compression":"COMP ","dataContent":"","index":0},{"name":"WRK-NCONTR-LCTO-CTA-N","size":"004","type":"PICS9","has_compression":"COMP ","dataContent":"","index":0}],"index":0},{"name":"WRK-VNMNAL-TITLO-COBR-R","size":"15","type":"PIC9","dataContent":"","index":0},{"name":"WRK-917-915V99","size":"17","type":"PIC9","dataContent":"","index":0},{"type":"GROUP_ITEM","logicalLevel":"01","name":"WRK-MSG-FS","dataFields":[{"name":"FILLER","size":"005","type":"PICX","dataContent":"","index":0},{"name":"WRK-OPERACAO","size":"013","type":"PICX","dataContent":"","index":0},{"name":"FILLER","size":"012","type":"PICX","dataContent":"","index":0},{"name":"WRK-ARQUIVO","size":"008","type":"PICX","dataContent":"","index":0},{"name":"FILLER","size":"016","type":"PICX","dataContent":"","index":0},{"name":"WRK-FS","size":"002","type":"PICX","dataContent":"","index":0},{"name":"WRK-ABERTURA","size":"013","type":"PICX","dataContent":"","index":0},{"name":"WRK-LEITURA","size":"013","type":"PICX","dataContent":"","index":0},{"name":"WRK-FECHAMENTO","size":"013","type":"PICX","dataContent":"","index":0},{"name":"WRK-GRAVACAO","size":"013","type":"PICX","dataContent":"","index":0},{"name":"FILLER","size":"050","type":"PICX","dataContent":"","index":0}],"index":0},{"type":"GROUP_ITEM","logicalLevel":"01","name":"WRK-MSG-SQL","dataFields":[{"name":"FILLER","size":"008","type":"PICX","dataContent":"","index":0},{"name":"FILLER","size":"009","type":"PICX","dataContent":"","index":0},{"name":"WRK-SQLCODE","size":"009","type":"PIC_PLUS_9","dataContent":"","index":0},{"name":"FILLER","size":"050","type":"PICX","dataContent":"","index":0},{"name":"WRK-FS-ARQBAIXA","size":"002","type":"PICX","dataContent":"","index":0},{"name":"WRK-FS-BAIXA34","size":"002","type":"PICX","dataContent":"","index":0},{"name":"WRK-FS-BAIXA35","size":"002","type":"PICX","dataContent":"","index":0},{"name":"WRK-FS-TITBAIXA","size":"002","type":"PICX","dataContent":"","index":0},{"name":"WRK-FS-TITDUPL","size":"002","type":"PICX","dataContent":"","index":0},{"name":"FILLER","size":"050","type":"PICX","dataContent":"","index":0}],"index":0},{"type":"GROUP_ITEM","logicalLevel":"01","name":"WRK-AREA-CBTTWREA","dataFields":[],"index":0}];
+    };
+
+
+
+    return $bookService;
+})
+.controller('ctrl1', function($scope, $sce, $mdDialog, $bookService){
     
     $scope.pieces = [];
-    
-    var guidExtraInfo = {};
-    
-    function dumpDataArray(dataFields){ 
-        dataFields.map((subField) => {
-            dumpData(subField);
-        });
-    } 
-    
-    function dumpData(dataField){
-        if(!dataField.guid){
-            dataField.guid = guid().replace(/-/g, '_');
-            guidExtraInfo[dataField.guid] = {dataField, color: getRandomColor(dataField.type)};
-            $scope.pieces.push(guidExtraInfo[dataField.guid]);   
-        }
-
-        switch(dataField.type){
-        case 'GROUP_ITEM':
-            dumpDataArray(dataField.dataFields);
-            break;
-        case 'PIC9':
-            dataField.dataContentHtml = 
-            dataField.dataContent.padStart(dataField.size, '0')
-            .replace(/ /g, "&nbsp;"); 
-            break;
-        default:
-            dataField.dataContentHtml = 
-            dataField.dataContent.padEnd(dataField.size, ' ')
-            .replace(/ /g, "&nbsp;"); 
-            break;
-        }
-
-    }
-    const randomColorHueTypeMap = {
-        'PICX': 'yellow',
-        'PIC9': 'orange',
-        'PICS9': 'orange',
-        'PIC_PLUS_9': 'orange'
-    };
-    function getRandomColor(type) {
-        var hue = (randomColorHueTypeMap[type] || 'orange');
-        return randomColor({luminosity: 'light', hue: hue});
-    }
-    
-    $scope.buildFullContent = function(){
-        $scope.pieces = [];
-    
-        guidExtraInfo = {};
-        dumpDataArray($scope.data);    
-    }
-    $scope.buildFullContent();
+        
     $scope.onItemChange = function(item){
         dumpData(item);
     };
@@ -111,9 +136,9 @@ angular.module('app1', ['ngMaterial', 'ngMessages'])
         })
         .then(function(value) {
             // $scope.copyBookDefSource = value;
-            var spec = cdsCopyBook.loadBook(value);
-            $scope.data = cdsCopyBook.expandDataBook(spec);
-            $scope.buildFullContent();
+            $bookService.parseBook(value);            
+
+            $scope.pieces = $bookService.book.rawDataFields;
 
         }, function() {
             

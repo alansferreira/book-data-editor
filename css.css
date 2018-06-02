@@ -9,6 +9,12 @@
   
 }
 
+.text-area-copybook-spec {
+  font-family: Lucida console;
+  font-size: 12px;
+  width: 600px;
+  height: 350px;
+}
 .full-content-html {
     position: fixed;
     top: 70px;

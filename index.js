@@ -84,7 +84,8 @@ angular.module('app1', ['ngMaterial', 'ngMessages'])
     return $bookService;
 })
 .controller('ctrl1', function($scope, $sce, $mdDialog, $bookService){
-    
+
+
     $scope.pieces = [];
         
     $scope.onItemChange = function(item){
@@ -132,7 +133,8 @@ angular.module('app1', ['ngMaterial', 'ngMessages'])
             contentElement: '#dlgOpenCopyBookDefinition',
             parent: angular.element(document.body),
             targetEvent: ev,
-            clickOutsideToClose: true
+            clickOutsideToClose: true,
+            fullscreen: true
         })
         .then(function(value) {
             // $scope.copyBookDefSource = value;
@@ -149,6 +151,11 @@ angular.module('app1', ['ngMaterial', 'ngMessages'])
 })
 .controller('dialogController', function ($scope, $mdDialog) {
     console.log('dialog loaded');
+    var cobolEditor = monaco.editor.create(document.getElementById("cobolEditor"), {
+        value: "",
+        language: "text"
+    });
+
     $scope.hide = function() {
       $mdDialog.hide();
     };
@@ -158,7 +165,7 @@ angular.module('app1', ['ngMaterial', 'ngMessages'])
     };
 
     $scope.ok = function(answer) {
-      $mdDialog.hide(answer);
+      $mdDialog.hide(cobolEditor.getValue());
     };
 }); 
 

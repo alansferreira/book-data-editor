@@ -88,7 +88,7 @@ angular.module('app1', ['ngMaterial', 'ngMessages'])
     $scope.pieces = [];
         
     $scope.onItemChange = function(item){
-        dumpData(item);
+        $bookService.dumpData(item);
     };
 
     $scope.onPieceClick = function(piece, ev){
